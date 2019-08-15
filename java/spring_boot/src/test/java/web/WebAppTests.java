@@ -31,12 +31,24 @@ public class WebAppTests {
 
     @Test
     public void shouldReturn200WhenSendingRequestToController() throws Exception {
-        mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+        ;
         @SuppressWarnings("rawtypes")
         ResponseEntity<Map> entity = this.testRestTemplate.getForEntity(
                 "http://localhost:" + this.port + "/greeting?name=me", Map.class);
 
-        then(entity.getBody()).isEqualTo(new Person(10, "me"));
+        then(entity.getStatusCodeValue()).isEqualTo(200);
     }
+
+    @Test
+    public void shouldReturnBodyWhenSendingRequestToController() throws Exception {
+        ;
+        @SuppressWarnings("rawtypes")
+        ResponseEntity<Map> entity = this.testRestTemplate.getForEntity(
+                "http://localhost:" + this.port + "/greeting?name=me", Map.class);
+
+        then(entity.getBody()).isEqualTo(mapper.writeValueAsString(new Person(10, "me")));
+    }
+
+
 
 }
