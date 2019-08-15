@@ -16,7 +16,15 @@ buildscript {
 plugins {
     id 'java'
 }
+
+jar {
+    baseName = 'first-spring-app'
+    version =  '0.1.0'
+}
+
 group = "iosdevtrainee"
+
+
 apply plugin: 'java'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
@@ -25,11 +33,11 @@ apply plugin: 'com.palantir.docker'
 // dockerizing spring boot app
 task unpack(type: Copy) {
     dependsOn bootJar // wait for bootJar to complete
-    from(zipTree(tasks.bootJar.outputs.files.singleFile)) // unzip the jar from bootJar
+    from(zipTree(tasks.jar.outputs.files.singleFile)) // unzip the jar from bootJar
     into("build/dependency") // store the created jar into build/dependency
 }
 docker {
-    name "${project.group}/${bootJar.baseName}" // group i.e. iosdevtrainee/
+    name "${project.group}/${jar.baseName}" // group i.e. iosdevtrainee/
     copySpec.from(tasks.unpack.outputs).into("dependency")
     buildArgs(['DEPENDENCY': "dependency"]) // create the env var for the build i.e. dependency
 }
@@ -37,6 +45,8 @@ docker {
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 
 repositories {
     mavenCentral()
@@ -45,4 +55,5 @@ repositories {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile("org.springframework.boot:spring-boot-starter-test")
 }
